@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Ruleta habilidades gimnásticas</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    text-align: center;
+}
+
+.ruleta-container {
+    position: relative;
+    width: 360px;
+    height: 360px;
+    margin: 30px auto;
+}
+
+.ruleta {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 6px solid #333;
+    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+    position: relative;
+}
+
+.sector-texto {
+    position: absolute;
+    width: 50%;
+    left: 50%;
+    top: 50%;
+    transform-origin: left center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.flecha {
+    position: absolute;
+    top: 160px;
+    left: 105%;
+    transform: translateX(-110%);
+    width: 0;
+    height: 0;
+    border-top: 16px solid transparent;
+    border-right: 26px solid #222;
+    border-bottom: 16px solid transparent;
+    filter: drop-shadow(0 3px 3px rgba(0,0,0,0.4));
+    z-index: 500;
+}
+
+
+button {
+    padding: 10px 18px;
+    margin: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+input {
+    padding: 8px;
+    font-size: 14px;
+}
+
+#resultado {
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.lista ul {
+    list-style: none;
+    padding: 0;
+}
+
+.lista li {
+    margin: 6px 0;
+}
+
+.lista button {
+    margin-left: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Ruleta habilidades gimnásticas</h1>
+
+<div class="ruleta-container">
+    <div class="flecha"></div>
+    <div class="ruleta" id="ruleta"></div>
+</div>
+
+<button onclick="spin()">SPIN</button>
+<button onclick="skip()">SKIP</button>
+<button onclick="reset()">REINICIAR</button>
+
+<div id="resultado"></div>
+
+<h3>Añadir opción</h3>
+<input type="text" id="nuevaOpcion" placeholder="Nueva opción">
+<button onclick="agregarOpcion()">Añadir</button>
+
+<div class="lista">
+    <h3>Opciones</h3>
+    <ul id="listaOpciones"></ul>
+</div>
+
+<script>
+let opcionesIniciales = [
+    "Voltereta hacia adelante",
+    "Pino",
+    "Voltereta hacia atrás",
+    "Voltereta lateral"
+];
+
+let opciones = [...opcionesIniciales];
+let rotacion = 0;
+let opcionActual = null;
+//Á Función para generar colores
+function generarColores(n) {
+    let colores = [];
+    for (let i = 0; i < n; i++) {
+        colores.push(`hsl(${i * (360 / n)}, 80%, 65%)`);
+    }
+    return colores;
+}
+//L Función para dibujar la ruleta
+function dibujarRuleta() {
+    const ruleta = document.getElementById("ruleta");
+    ruleta.innerHTML = "";
+
+    if (opciones.length === 0) {
+        ruleta.style.background = "#ccc";
+        return;
+    }
+
+    const colores = generarColores(opciones.length);
+    const angulo = 360 / opciones.length;
+
+    let gradiente = "conic-gradient(";
+    opciones.forEach((_, i) => {
+        gradiente += `${colores[i]} ${i * angulo}deg ${(i + 1) * angulo}deg,`;
+    });
+    gradiente = gradiente.slice(0, -1) + ")";
+    ruleta.style.background = gradiente;
+
+    opciones.forEach((op, i) => {
+        const texto = document.createElement("div");
+        texto.className = "sector-texto";
+        texto.style.transform = `
+            rotate(${i * angulo + angulo / 2}deg)
+            translate(0, -50%)
+        `;
+        texto.textContent = op;
+        ruleta.appendChild(texto);
+    });
+}
+//V Función para actualizar la lista de opciones
+function actualizarLista() {
+    const lista = document.getElementById("listaOpciones");
+    lista.innerHTML = "";
+    opciones.forEach((op, i) => {
+        const li = document.createElement("li");
+        li.textContent = op;
+
+        const btn = document.createElement("button");
+        btn.textContent = "X";
+        btn.onclick = () => eliminarOpcion(i);
+
+        li.appendChild(btn);
+        lista.appendChild(li);
+    });
+}
+//A Función para girar la ruleta
+function spin() {
+    if (opciones.length === 0) {
+        document.getElementById("resultado").textContent = "No quedan opciones";
+        return;
+    }
+
+    const vueltas = Math.floor(Math.random() * 3) + 4;
+    const gradosExtra = Math.random() * 360;
+
+    rotacion += vueltas * 360 + gradosExtra;
+
+    const ruleta = document.getElementById("ruleta");
+    ruleta.style.transform = `rotate(${rotacion}deg)`;
+
+    const sector = 360 / opciones.length;
+
+    //Ángulo real donde apunta la flecha
+    const anguloFinal = (360 - (rotacion % 360)) % 360;
+
+    const index = Math.floor(anguloFinal / sector);
+
+    setTimeout(() => {
+        opcionActual = opciones[index];
+        document.getElementById("resultado").textContent =
+            "Resultado: " + opcionActual;
+    }, 4000);
+}
+
+//R Función para saltar la opción seleccionada
+function skip() {
+    if (!opcionActual) return;
+    opciones = opciones.filter(op => op !== opcionActual);
+    opcionActual = null;
+    dibujarRuleta();
+    actualizarLista();
+    document.getElementById("resultado").textContent = "Opción eliminada";
+}
+//O Función para reiniciar la ruleta
+function reset() {
+    opciones = [...opcionesIniciales];   // Restaurar opciones
+    rotacion = 0;                         // Volver a 0 grados
+    opcionActual = null;                  // Borrar resultado
+
+    const ruleta = document.getElementById("ruleta");
+    ruleta.style.transition = "none";     // Evita animación
+    ruleta.style.transform = "rotate(0deg)";
+
+    // Forzar reflow para que el navegador aplique el cambio
+    ruleta.offsetHeight;
+
+    ruleta.style.transition = "transform 4s cubic-bezier(0.33, 1, 0.68, 1)";
+
+    document.getElementById("resultado").textContent = "";
+
+    dibujarRuleta();
+    actualizarLista();
+}
+
+//R Función para agregar una nueva opción
+function agregarOpcion() {
+    const input = document.getElementById("nuevaOpcion");
+    const valor = input.value.trim();
+    if (!valor) return;
+    opciones.push(valor);
+    input.value = "";
+    dibujarRuleta();
+    actualizarLista();
+}
+//L Función para eliminar una opción
+function eliminarOpcion(i) {
+    opciones.splice(i, 1);
+    dibujarRuleta();
+    actualizarLista();
+}
+
+dibujarRuleta();
+actualizarLista();
+</script>
+
+</body>
+</html>
