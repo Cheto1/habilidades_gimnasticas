@@ -39,7 +39,7 @@ body {
 
 .flecha {
     position: absolute;
-    top: 162px;
+    top: 175px;
     left: 105%;
     transform: translateX(-110%);
     width: 0;
@@ -182,7 +182,7 @@ function spin() {
         return;
     }
 
-    const vueltas = Math.floor(Math.random() * 1) + 3;
+    const vueltas = Math.floor(Math.random() * 1) + 1;
     const gradosExtra = Math.random() * 360;
 
     rotacion += vueltas * 360 + gradosExtra;
@@ -257,6 +257,7 @@ actualizarLista();
 
 </body>
 </html>
+
 
 
 
