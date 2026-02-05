@@ -203,9 +203,13 @@ function spin() {
     
     const anguloPorSector = 360 / opciones.length;
     
-    // Normalizamos la rotación para que esté entre 0 y 359
-    // Usamos (360 - ...) porque la ruleta gira horario pero los índices son antihorarios
-    const anguloEfectivo = (360 - (rotacion % 360)) % 360;
+   // CALCULO CORREGIDO:
+    // 1. Obtenemos la rotación real dentro del círculo (0-359)
+    let anguloActual = rotacion % 360;
+    
+    // 2. La flecha está a 90 grados del inicio del dibujo (si el dibujo empieza arriba)
+    // Restamos la rotación a 360 para invertir el sentido y sumamos 90 para alinear con la derecha
+    let anguloEfectivo = (360 - anguloActual + 90) % 360;
     
     // Calculamos el índice
     const index = Math.floor(anguloEfectivo / anguloPorSector);
@@ -269,6 +273,7 @@ actualizarLista();
 
 </body>
 </html>
+
 
 
 
