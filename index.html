@@ -23,7 +23,7 @@ body {
     height: 100%;
     border-radius: 50%;
     border: 6px solid #333;
-    transition: transform 1,5s cubic-bezier(0.2, 0, 0.2, 1);
+    transition: transform 3s cubic-bezier(0.25, 1, 0.5, 1);
     position: relative;
     overflow: hidden;
 }
@@ -217,7 +217,7 @@ function spin() {
     setTimeout(() => {
         opcionActual = opciones[index];
         document.getElementById("resultado").textContent = "Resultado: " + opcionActual;
-    }, 1500);
+    }, 4000);
 }
 
 //R Función para saltar la opción seleccionada
@@ -273,6 +273,7 @@ actualizarLista();
 
 </body>
 </html>
+
 
 
 
