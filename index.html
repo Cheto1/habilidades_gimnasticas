@@ -145,7 +145,7 @@ function dibujarRuleta() {
     let acumulado = 0;
     opciones.forEach((_, i) => {
         acumulado += angulo;
-        gradiente += `${colores[i]} 0deg ${acomulado}deg,`;
+        gradiente += `${colores[i]} 0deg ${acumulado}deg,`;
     });
     gradiente = gradiente.slice(0, -2) + ")";
     ruleta.style.background = gradiente;
