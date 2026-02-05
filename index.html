@@ -142,10 +142,11 @@ function dibujarRuleta() {
     const angulo = 360 / opciones.length;
 
     let gradiente = "conic-gradient(";
-    let acumulado = 0;
+    let inicio = 0;
     opciones.forEach((_, i) => {
-        acumulado += angulo;
-        gradiente += `${colores[i]} 0deg ${acumulado}deg,`;
+       const fin = inicio + angulo;
+        gradiente += `${colores[i]} ${inicio}deg ${fin}deg,`;
+        inicio = fin;
     });
     gradiente = gradiente.slice(0, -2) + ")";
     ruleta.style.background = gradiente;
@@ -259,6 +260,7 @@ actualizarLista();
 
 </body>
 </html>
+
 
 
 
