@@ -23,27 +23,25 @@ body {
     height: 100%;
     border-radius: 50%;
     border: 6px solid #333;
-    transition: transform 3s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
     position: relative;
-    overflow: hidden;
 }
 
 .sector-texto {
     position: absolute;
-    width: 30%;
+    width: 50%;
     left: 50%;
     top: 50%;
     transform-origin: left center;
-    font-size: 18px;
+    font-size: 12px;
     font-weight: bold;
-    pointer-events: none;
 }
 
 .flecha {
     position: absolute;
-    top: 175px;
-    left: 90%;
-    transform: translateX(105%);
+    top: 160px;
+    left: 105%;
+    transform: translateX(-110%);
     width: 0;
     height: 0;
     border-top: 16px solid transparent;
@@ -124,7 +122,7 @@ let rotacion = 0;
 let opcionActual = null;
 //Á Función para generar colores
 function generarColores(n) {
-    const colores = [];
+    let colores = [];
     for (let i = 0; i < n; i++) {
         colores.push(`hsl(${i * (360 / n)}, 80%, 65%)`);
     }
@@ -143,21 +141,19 @@ function dibujarRuleta() {
     const colores = generarColores(opciones.length);
     const angulo = 360 / opciones.length;
 
-    // Construcción del gradiente con cortes limpios
-    let secciones = colores.map((color, i) => {
-        return `${color} ${i * angulo}deg ${(i + 1) * angulo}deg`;
+    let gradiente = "conic-gradient(";
+    opciones.forEach((_, i) => {
+        gradiente += `${colores[i]} ${i * angulo}deg ${(i + 1) * angulo}deg,`;
     });
-    
-    ruleta.style.background = `conic-gradient(${secciones.join(", ")})`;
+    gradiente = gradiente.slice(0, -1) + ")";
+    ruleta.style.background = gradiente;
 
-    // Dibujar los textos
     opciones.forEach((op, i) => {
         const texto = document.createElement("div");
         texto.className = "sector-texto";
-        // Centramos el texto mejor y lo rotamos
         texto.style.transform = `
             rotate(${i * angulo + angulo / 2}deg)
-            translate(60px, -50%) 
+            translate(0, -50%)
         `;
         texto.textContent = op;
         ruleta.appendChild(texto);
@@ -186,37 +182,25 @@ function spin() {
         return;
     }
 
-    // 1. Aumentamos las vueltas para que sea más real (mínimo 5 vueltas)
-    const vueltas = Math.floor(Math.random() * 5) + 5;
+    const vueltas = Math.floor(Math.random() * 3) + 4;
     const gradosExtra = Math.random() * 360;
-    
-    // Sumamos a la rotación total
-    rotacion += (vueltas * 360) + gradosExtra;
+
+    rotacion += vueltas * 360 + gradosExtra;
 
     const ruleta = document.getElementById("ruleta");
     ruleta.style.transform = `rotate(${rotacion}deg)`;
 
-    // 2. CÁLCULO DE LA OPCIÓN GANADORA
-    // La flecha está en el lado derecho (0 grados). 
-    // Al girar la ruleta 'X' grados, el sector que queda en la flecha 
-    // es el que estaba originalmente a '-rotacion' grados.
-    
-    const anguloPorSector = 360 / opciones.length;
-    
-   // CALCULO CORREGIDO:
-    // 1. Obtenemos la rotación real dentro del círculo (0-359)
-    let anguloActual = rotacion % 360;
-    
-    // 2. La flecha está a 90 grados del inicio del dibujo (si el dibujo empieza arriba)
-    // Restamos la rotación a 360 para invertir el sentido y sumamos 90 para alinear con la derecha
-    let anguloEfectivo = (360 - anguloActual + 90) % 360;
-    
-    // Calculamos el índice
-    const index = Math.floor(anguloEfectivo / anguloPorSector);
+    const sector = 360 / opciones.length;
+
+    //Ángulo real donde apunta la flecha
+    const anguloFinal = (360 - (rotacion % 360)) % 360;
+
+    const index = Math.floor(anguloFinal / sector);
 
     setTimeout(() => {
         opcionActual = opciones[index];
-        document.getElementById("resultado").textContent = "Resultado: " + opcionActual;
+        document.getElementById("resultado").textContent =
+            "Resultado: " + opcionActual;
     }, 4000);
 }
 
@@ -273,23 +257,3 @@ actualizarLista();
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
