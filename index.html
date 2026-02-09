@@ -23,7 +23,7 @@ body {
     height: 100%;
     border-radius: 50%;
     border: 6px solid #333;
-    transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+    transition: transform 2s cubic-bezier(0.25, 0.5, 0.25, 1);
     position: relative;
 }
 
@@ -39,16 +39,16 @@ body {
 
 .flecha {
     position: absolute;
-    top: 160px;
-    left: 105%;
-    transform: translateX(-110%);
+    top: 50%;
+    right: -10%;
+    transform: translateY(-50%);
     width: 0;
     height: 0;
-    border-top: 16px solid transparent;
-    border-right: 26px solid #222;
-    border-bottom: 16px solid transparent;
+    border-top: 15px solid transparent;
+    border-right: 25px solid #222;
+    border-bottom: 15px solid transparent;
     filter: drop-shadow(0 3px 3px rgba(0,0,0,0.4));
-    z-index: 500;
+    z-index: 1000;
 }
 
 
@@ -182,28 +182,50 @@ function spin() {
         return;
     }
 
-    const vueltas = Math.floor(Math.random() * 3) + 4;
-    const gradosExtra = Math.random() * 360;
+    // 1. Calculamos el tamaño de cada trozo de pizza
+    const sliceDeg = 360 / opciones.length;
 
-    rotacion += vueltas * 360 + gradosExtra;
+    // 2. Definimos cuántas vueltas dará
+    const vueltas = Math.floor(Math.random() * 3) + 4; 
+    
+    // Generamos un número entre el 10% y el 90% del tamaño del sector.
+    const offsetAleatorio = Math.random() * (sliceDeg * 0.8) + (sliceDeg * 0.1);
+    
+    // Calculamos el giro total basado en múltiplos del sector + el ajuste seguro
+    const giroExtra = Math.floor(Math.random() * opciones.length) * sliceDeg + offsetAleatorio;
+    const giroTotal = vueltas * 360 + giroExtra;
 
+    rotacion += giroTotal;
+
+    // 3. Giramos la ruleta visualmente
     const ruleta = document.getElementById("ruleta");
     ruleta.style.transform = `rotate(${rotacion}deg)`;
 
-    const sector = 360 / opciones.length;
+    // 4. Calculamos el ganador MATEMÁTICAMENTE
+    // La flecha está fija a la derecha, eso son 90 grados (offset)
+    // Usamos el operador % para obtener el resto de la división y ver dónde cae
+    
+    const anguloActual = rotacion % 360;
+    
+    // Fórmula (PosiciónFlecha - AnguloRotacion + 360) % 360
+    // Esto nos da el punto exacto de la ruleta que está tocando la flecha (0 a 359)
+    const anguloGanador = (0 - anguloActual + 360) % 360;
 
-    //Ángulo real donde apunta la flecha
-    const anguloFinal = (360 - (rotacion % 360)) % 360;
+    // Convertimos el ángulo en el índice (0, 1, 2...)
+    const indiceGanador = Math.floor(anguloGanador / sliceDeg);
 
-    const index = Math.floor(anguloFinal / sector);
+    // 5. Mostramos el resultado al terminar
+    ruleta.ontransitionend = () => {
+        ruleta.ontransitionend = null;
+        opcionActual = opciones[indiceGanador];
+        document.getElementById("resultado").textContent = "Resultado: " + opcionActual;
+        
+        // Esto es para depurar si alguna vez falla:
+        console.log(`Opciones: ${opciones.length}, Ángulo Flecha: ${anguloGanador.toFixed(2)}, Ganador Índice: ${indiceGanador}`);
+    };
 
-    setTimeout(() => {
-        opcionActual = opciones[index];
-        document.getElementById("resultado").textContent =
-            "Resultado: " + opcionActual;
-    }, 4000);
+    document.getElementById("resultado").textContent = "Girando...";
 }
-
 //R Función para saltar la opción seleccionada
 function skip() {
     if (!opcionActual) return;
@@ -226,7 +248,7 @@ function reset() {
     // Forzar reflow para que el navegador aplique el cambio
     ruleta.offsetHeight;
 
-    ruleta.style.transition = "transform 4s cubic-bezier(0.33, 1, 0.68, 1)";
+    ruleta.style.transition = "transform 2s cubic-bezier(0.25, 0.50, 0.25, 1)";
 
     document.getElementById("resultado").textContent = "";
 
