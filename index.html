@@ -186,7 +186,7 @@ function spin() {
     const sliceDeg = 360 / opciones.length;
 
     // 2. Definimos cuántas vueltas dará
-    const vueltas = Math.floor(Math.random() * 3) + 4; 
+    const vueltas = Math.floor(Math.random() * 2) + 3; 
     
     // Generamos un número entre el 10% y el 90% del tamaño del sector.
     const offsetAleatorio = Math.random() * (sliceDeg * 0.8) + (sliceDeg * 0.1);
@@ -279,3 +279,4 @@ actualizarLista();
 
 </body>
 </html>
+
