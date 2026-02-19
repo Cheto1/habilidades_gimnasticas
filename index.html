@@ -186,10 +186,10 @@ function spin() {
     const sliceDeg = 360 / opciones.length;
 
     // 2. Definimos cuántas vueltas dará
-    const vueltas = Math.floor(Math.random() * 2) + 0.7; 
+    const vueltas = Math.floor(Math.random() * 2) + 1; 
     
     // Generamos un número entre el 10% y el 90% del tamaño del sector.
-    const offsetAleatorio = Math.random() * (sliceDeg * 1.6) + (sliceDeg * 0.8);
+    const offsetAleatorio = Math.random() * (sliceDeg * 0.1) + (sliceDeg * 0.8);
     
     // Calculamos el giro total basado en múltiplos del sector + el ajuste seguro
     const giroExtra = Math.floor(Math.random() * opciones.length) * sliceDeg + offsetAleatorio;
@@ -279,6 +279,7 @@ actualizarLista();
 
 </body>
 </html>
+
 
 
 
