@@ -39,14 +39,14 @@ body {
 
 .flecha {
     position: absolute;
-    top: 165px;
-    right: 160px;
-    transform: translateY(50%);
+    top: 180px;
+    right: 105%;
+    transform: translateY(110%);
     width: 0;
     height: 0;
-    border-right: 15px solid transparent;
-    border-top: 25px solid #222;
-    border-left: 15px solid transparent;
+    border-right: 25px solid #222;
+    border-bottom: 15px solid transparent;
+    border-top: 15px solid transparent;
     filter: drop-shadow(0 3px 3px rgba(0,0,0,0.4));
     z-index: 1000;
 }
@@ -209,7 +209,7 @@ function spin() {
     
     // Fórmula (PosiciónFlecha - AnguloRotacion + 360) % 360
     // Esto nos da el punto exacto de la ruleta que está tocando la flecha (0 a 359)
-    const anguloGanador = (90 - anguloActual + 360) % 360;
+    const anguloGanador = (0 - anguloActual + 360) % 360;
 
     // Convertimos el ángulo en el índice (0, 1, 2...)
     const indiceGanador = Math.floor(anguloGanador / sliceDeg);
@@ -279,3 +279,4 @@ actualizarLista();
 
 </body>
 </html>
+
